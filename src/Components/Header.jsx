@@ -12,7 +12,7 @@ export const Header = () => {
            <img
              src={logo} 
              alt="Brand logo" 
-             className="h-12 w-auto rounded-xl object-contain" 
+             className="h-15 w-auto rounded-xl object-contain" 
            />
         </Link>
 
