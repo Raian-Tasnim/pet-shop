@@ -1,20 +1,35 @@
-import React, { useState } from 'react';
-import { ShoppingCart, Star, Filter, Ban } from 'lucide-react';
+import React, { useState, useEffect } from 'react'; // 1. Import useEffect
+import { ShoppingCart, Star, Filter, Ban, ArrowDownUp } from 'lucide-react';
 import { productData } from '../Data/productData';
 
 export const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
-  
-  // UPDATED: Default max price increased to 20,000 for BDT
-  const [maxPrice, setMaxPrice] = useState(20000); 
+  const [maxPrice, setMaxPrice] = useState(20000);
+  const [sortBy, setSortBy] = useState('default');
 
   const categories = ['All', 'Food & Treats', 'Toys', 'Bedding', 'Health & Wellness', 'Accessories'];
+
+  // 2. NEW: Scroll to top whenever Category or Sort changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [selectedCategory, sortBy]);
 
   // Filter Logic
   const filteredProducts = productData.filter((product) => {
     const categoryMatch = selectedCategory === 'All' || product.category === selectedCategory;
     const priceMatch = product.price <= maxPrice;
     return categoryMatch && priceMatch;
+  });
+
+  // Sort Logic
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (sortBy === 'latest') {
+      return b.id - a.id; 
+    }
+    if (sortBy === 'popular') {
+      return b.sales - a.sales; 
+    }
+    return 0; 
   });
 
   return (
@@ -24,9 +39,23 @@ export const Shop = () => {
       <div className="bg-[#6F4E37] text-white py-8 px-6 shadow-md">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <h1 className="text-3xl font-bold">Shop Essentials</h1>
+          
+          {/* Sort Buttons */}
           <div className="flex gap-3">
-             <button className="px-4 py-2 rounded-lg bg-[#5a3e2b] text-sm hover:bg-[#bd4e0e] transition">Latest</button>
-             <button className="px-4 py-2 rounded-lg bg-[#5a3e2b] text-sm hover:bg-[#bd4e0e] transition">Popular</button>
+             <button 
+               onClick={() => setSortBy('latest')}
+               className={`px-4 py-2 rounded-lg text-sm transition font-medium flex items-center gap-2
+                 ${sortBy === 'latest' ? 'bg-[#bd4e0e] text-white ring-2 ring-white/20' : 'bg-[#5a3e2b] hover:bg-[#bd4e0e]'}`}
+             >
+               Latest
+             </button>
+             <button 
+               onClick={() => setSortBy('popular')}
+               className={`px-4 py-2 rounded-lg text-sm transition font-medium flex items-center gap-2
+                 ${sortBy === 'popular' ? 'bg-[#bd4e0e] text-white ring-2 ring-white/20' : 'bg-[#5a3e2b] hover:bg-[#bd4e0e]'}`}
+             >
+               Popular
+             </button>
           </div>
         </div>
       </div>
@@ -57,13 +86,12 @@ export const Shop = () => {
           </div>
 
           <div>
-            {/* UPDATED: Currency Symbol */}
-            <h3 className="font-bold text-[#6F4E37] mb-4 text-lg">Max Price: ৳{maxPrice}</h3>
+            <h3 className="font-bold text-[#6F4E37] mb-4 text-lg">Max Price: ৳{maxPrice.toLocaleString()}</h3>
             <input 
               type="range" 
               min="0" 
-              max="20000" // Increased range for Taka
-              step="500"  // Steps of 500 TK
+              max="20000" 
+              step="500"
               value={maxPrice}
               onChange={(e) => setMaxPrice(Number(e.target.value))}
               className="w-full accent-[#6F4E37] cursor-pointer" 
@@ -76,16 +104,15 @@ export const Shop = () => {
 
         {/* Product Grid */}
         <div className="flex-1">
-          {filteredProducts.length > 0 ? (
+          {sortedProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map((item) => (
+              {sortedProducts.map((item) => (
                 <div key={item.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 group relative">
                   
-                  {/* Image Container */}
                   <div className="h-48 bg-[#F5F5DC] rounded-xl mb-4 flex items-center justify-center overflow-hidden relative">
                     
                     {!item.inStock && (
-                      <div className="absolute inset-0 bg-white/60 z-10 flex items-center justify-center backdrop-blur-[2px]">
+                      <div className="absolute inset-0 bg-white/5 z-10 flex items-center justify-center backdrop-blur-[0.5px]">
                         <span className="bg-slate-800 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1">
                           <Ban size={12} /> Out of Stock
                         </span>
@@ -107,12 +134,18 @@ export const Shop = () => {
                     )}
                   </div>
                   
-                  {/* Details */}
                   <div className="space-y-1">
                     <div className="flex justify-between items-start">
                       <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">{item.category}</span>
-                      <div className="flex text-yellow-400 text-xs">
-                        {[...Array(item.rating)].map((_, i) => <Star key={i} size={12} fill="currentColor" />)}
+                      <div className="flex text-yellow-400 text-xs gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <Star 
+                            key={i} 
+                            size={12} 
+                            fill={i < item.rating ? "currentColor" : "none"} 
+                            className={i < item.rating ? "text-yellow-400" : "text-slate-300"}
+                          />
+                        ))}
                       </div>
                     </div>
                     
@@ -120,7 +153,6 @@ export const Shop = () => {
                       {item.name}
                     </h3>
                     
-                    {/* UPDATED: Currency Symbol */}
                     <p className={`font-bold text-xl ${item.inStock ? 'text-[#bd4e0e]' : 'text-slate-400'}`}>
                       ৳{item.price.toLocaleString()} 
                     </p>
@@ -136,7 +168,7 @@ export const Shop = () => {
               <h3 className="text-xl font-bold text-slate-600">No products found</h3>
               <p>Try adjusting your price range or category.</p>
               <button 
-                onClick={() => {setSelectedCategory('All'); setMaxPrice(20000);}}
+                onClick={() => {setSelectedCategory('All'); setMaxPrice(20000); setSortBy('default');}}
                 className="mt-4 text-[#bd4e0e] font-bold hover:underline"
               >
                 Clear Filters

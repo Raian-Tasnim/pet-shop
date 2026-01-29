@@ -11,12 +11,14 @@ import idTagImg from '../assets/products/Steel Pet ID Tag.jpg';
 import catnipImg from '../assets/products/Mini Catnip Pouch.jpg';
 
 export const productData = [
-    // --- EXISTING ITEMS ---
+    // High Sales = Popular
+    // High ID = Latest
     {
         id: 1,
         name: "Premium Dog Kibble (3kg)",
         price: 4500,
         rating: 5,
+        sales: 1500, // Very Popular
         category: "Food & Treats",
         inStock: true,
         img: dogKibbleImg
@@ -26,6 +28,7 @@ export const productData = [
         name: "Feather Wand Toy",
         price: 450,
         rating: 4,
+        sales: 850,
         category: "Toys",
         inStock: false,
         img: featherWandImg
@@ -35,6 +38,7 @@ export const productData = [
         name: "Orthopedic Pet Bed",
         price: 8500,
         rating: 5,
+        sales: 300,
         category: "Bedding",
         inStock: true,
         img: orthoBedImg
@@ -44,17 +48,17 @@ export const productData = [
         name: "Automatic Food Feeder",
         price: 12500,
         rating: 4,
+        sales: 120,
         category: "Accessories",
         inStock: true,
         img: autoFeederImg
     },
-
-    // --- BUDGET FRIENDLY ITEMS ---
     {
-        id: 9,
+        id: 9, // Higher ID = "Latest"
         name: "Classic Tennis Ball",
         price: 150,
-        rating: 4,
+        rating: 3, // Average Rating
+        sales: 45, // Low sales (New item)
         category: "Toys",
         inStock: true,
         img: tennisBallImg
@@ -64,6 +68,7 @@ export const productData = [
         name: "Steel Pet ID Tag",
         price: 250,
         rating: 5,
+        sales: 60,
         category: "Accessories",
         inStock: true,
         img: idTagImg
@@ -72,18 +77,18 @@ export const productData = [
         id: 11,
         name: "Mini Catnip Pouch",
         price: 350,
-        rating: 5,
+        rating: 4,
+        sales: 90,
         category: "Food & Treats",
         inStock: true,
         img: catnipImg
     },
-
-    // --- REST OF ITEMS ---
     {
         id: 5,
         name: "Natural Dog Chews",
         price: 1200,
         rating: 5,
+        sales: 950,
         category: "Food & Treats",
         inStock: true,
         img: dogChewsImg
@@ -92,7 +97,8 @@ export const productData = [
         id: 6,
         name: "Cat Scratch Post",
         price: 3500,
-        rating: 4,
+        rating: 3, // Lower rating
+        sales: 400,
         category: "Toys",
         inStock: true,
         img: scratchPostImg
@@ -101,7 +107,8 @@ export const productData = [
         id: 7,
         name: "Vitamin Supplements",
         price: 2200,
-        rating: 5,
+        rating: 4,
+        sales: 200,
         category: "Health & Wellness",
         inStock: false,
         img: vitaminsImg
@@ -111,6 +118,7 @@ export const productData = [
         name: "Leather Collar",
         price: 1500,
         rating: 4,
+        sales: 600,
         category: "Accessories",
         inStock: true,
         img: collarImg
