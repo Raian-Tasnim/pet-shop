@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
 import logo from "../assets/logo.png";
-
+import { Heart } from 'lucide-react';
 export const Header = () => {
   return (
     <header className="w-full bg-[#6F4E37] text-slate-900 sticky top-0 z-50 shadow-md">
@@ -37,6 +37,10 @@ export const Header = () => {
 
         {/* Button Group */}
         <div className="hidden md:flex items-center gap-4">
+            <Link to="/favorites" className="text-[#F5F5DC] hover:text-white transition relative">
+              <Heart size={24} />
+            </Link>
+            
             <button className="bg-[#F5F5DC] hover:bg-white px-5 py-2 rounded-lg text-sm text-[#6F4E37] font-bold transition shadow-sm">
               Sign In
             </button>
