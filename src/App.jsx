@@ -10,13 +10,18 @@ import { Shop } from './Components/Shop';
 import { Sell } from './Components/Sell';
 import { Contact } from './Components/Contact';
 import { Favorites } from './Components/Favorites'; 
-import ScrollToTop from './Components/ScrollToTop';
 import { PetDetails } from './Components/PetDetails';
-function App() {
-  // STATE 
-  const [favorites, setFavorites] = useState([]);
+import { Cart } from './Components/Cart'; 
+import ScrollToTop from './Components/ScrollToTop';
+import { Toast } from './Components/Toast'; 
 
-  // TOGGLE FUNCTION 
+function App() {
+  const [favorites, setFavorites] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
+
+  // UPDATED: Toast state now includes 'type'
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
   const toggleFavorite = (petId) => {
     if (favorites.includes(petId)) {
       setFavorites(favorites.filter(id => id !== petId));
@@ -25,25 +30,78 @@ function App() {
     }
   };
 
+  // --- UPDATED ADD TO CART LOGIC ---
+  const addToCart = (product) => {
+    // 1. Check if item exists
+    const isAlreadyInCart = cartItems.some((item) => item.id === product.id);
+
+    if (isAlreadyInCart) {
+      // 2. If yes, show "Info" toast and STOP
+      setToast({ 
+        show: true, 
+        message: `${product.name} is already in your cart!`,
+        type: 'info' // This triggers the blue info style
+      });
+      return; // Do not add the item
+    }
+
+    // 3. If no, add the item and show "Success" toast
+    setCartItems([...cartItems, { ...product, quantity: 1 }]);
+    
+    setToast({ 
+      show: true, 
+      message: `${product.name} added to cart!`,
+      type: 'success'
+    });
+  };
+
+  const removeFromCart = (id) => {
+    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  };
+
+  const updateQuantity = (id, amount) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, quantity: Math.max(1, item.quantity + amount) } : item
+      )
+    );
+  };
+
+  const closeToast = () => setToast({ ...toast, show: false });
+
   return (
     <Router>
       <ScrollToTop />
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen relative">
         
+        <Header cartItems={cartItems} /> 
         
-        <Header /> 
-        
+        {/* Pass the 'type' to the Toast component */}
+        <Toast 
+          message={toast.message} 
+          isVisible={toast.show} 
+          type={toast.type} 
+          onClose={closeToast} 
+        />
+
         <Routes>
           <Route path="/" element={<Home />} />
-          
-          {/* PASS PROPS TO ADOPT */}
           <Route path="/adopt" element={<Adopt favorites={favorites} toggleFavorite={toggleFavorite} />} />
-           <Route path="/adopt/:id" element={<PetDetails />} />
-          <Route path="/shop" element={<Shop />} />
+          <Route path="/adopt/:id" element={<PetDetails />} />
+          <Route path="/shop" element={<Shop addToCart={addToCart} />} />
+          <Route 
+            path="/cart" 
+            element={
+              <Cart 
+                cartItems={cartItems} 
+                removeFromCart={removeFromCart} 
+                updateQuantity={updateQuantity} 
+              />
+            } 
+          />
           <Route path="/sell" element={<Sell />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/favorites" element={<Favorites favorites={favorites} toggleFavorite={toggleFavorite} />} />
-         
         </Routes>
 
         <Footer />

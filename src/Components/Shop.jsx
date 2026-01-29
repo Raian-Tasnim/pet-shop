@@ -1,35 +1,36 @@
-import React, { useState, useEffect } from 'react'; // 1. Import useEffect
-import { ShoppingCart, Star, Filter, Ban, ArrowDownUp } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShoppingCart, Star, Filter, Ban } from 'lucide-react';
 import { productData } from '../Data/productData';
 
-export const Shop = () => {
+// Receive addToCart as a prop from App.jsx
+export const Shop = ({ addToCart }) => {
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [maxPrice, setMaxPrice] = useState(20000);
-  const [sortBy, setSortBy] = useState('default');
+  const [maxPrice, setMaxPrice] = useState(20000); // Max price 20k BDT
+  const [sortBy, setSortBy] = useState('default'); // 'default', 'latest', 'popular'
 
   const categories = ['All', 'Food & Treats', 'Toys', 'Bedding', 'Health & Wellness', 'Accessories'];
 
-  // 2. NEW: Scroll to top whenever Category or Sort changes
+  // Scroll to top whenever Category or Sort changes for better UX
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [selectedCategory, sortBy]);
 
-  // Filter Logic
+  // 1. Filter Logic
   const filteredProducts = productData.filter((product) => {
     const categoryMatch = selectedCategory === 'All' || product.category === selectedCategory;
     const priceMatch = product.price <= maxPrice;
     return categoryMatch && priceMatch;
   });
 
-  // Sort Logic
+  // 2. Sort Logic
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (sortBy === 'latest') {
-      return b.id - a.id; 
+      return b.id - a.id; // Higher ID = Newer
     }
     if (sortBy === 'popular') {
-      return b.sales - a.sales; 
+      return b.sales - a.sales; // Higher sales = More Popular
     }
-    return 0; 
+    return 0; // Default order
   });
 
   return (
@@ -109,11 +110,13 @@ export const Shop = () => {
               {sortedProducts.map((item) => (
                 <div key={item.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 group relative">
                   
+                  {/* Image Container */}
                   <div className="h-48 bg-[#F5F5DC] rounded-xl mb-4 flex items-center justify-center overflow-hidden relative">
                     
+                    {/* Out of Stock Overlay (Less Blur) */}
                     {!item.inStock && (
-                      <div className="absolute inset-0 bg-white/5 z-10 flex items-center justify-center backdrop-blur-[0.5px]">
-                        <span className="bg-slate-800 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+                      <div className="absolute inset-0 bg-white/30 z-10 flex items-center justify-center backdrop-blur-[0.5px]">
+                        <span className="bg-slate-800 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1 shadow-md">
                           <Ban size={12} /> Out of Stock
                         </span>
                       </div>
@@ -127,16 +130,23 @@ export const Shop = () => {
                       } 
                     />
                     
+                    {/* Add to Cart Button - Only if In Stock */}
                     {item.inStock && (
-                      <button className="absolute bottom-3 right-3 bg-white p-2 rounded-full shadow-md text-[#6F4E37] opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition duration-300 hover:bg-[#6F4E37] hover:text-white cursor-pointer">
+                      <button 
+                        onClick={() => addToCart(item)}
+                        className="absolute bottom-3 right-3 bg-white p-2 rounded-full shadow-md text-[#6F4E37] opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition duration-300 hover:bg-[#6F4E37] hover:text-white cursor-pointer"
+                      >
                         <ShoppingCart size={20} />
                       </button>
                     )}
                   </div>
                   
+                  {/* Details */}
                   <div className="space-y-1">
                     <div className="flex justify-between items-start">
                       <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">{item.category}</span>
+                      
+                      {/* Dynamic Stars */}
                       <div className="flex text-yellow-400 text-xs gap-0.5">
                         {[...Array(5)].map((_, i) => (
                           <Star 
