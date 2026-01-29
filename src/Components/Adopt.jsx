@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Filter, Heart, MapPin, PawPrint } from 'lucide-react';
-import { petsData } from '../Data/petsData'; // Importing data from your Data folder
-
+import { petsData } from '../Data/petsData'; 
+import { Link } from 'react-router-dom';
 export const Adopt = ({ favorites, toggleFavorite }) => {
   const [activeFilter, setActiveFilter] = useState('All');
   
-  // Filter logic based on the 'tag' property in petsData
+  
   const filteredPets = activeFilter === 'All' 
     ? petsData 
     : petsData.filter(pet => pet.tag === activeFilter);
@@ -88,9 +88,12 @@ export const Adopt = ({ favorites, toggleFavorite }) => {
                       <MapPin size={16} /> {pet.loc}
                     </div>
 
-                    <button className="w-full mt-6 bg-[#6F4E37] text-white py-3 rounded-xl font-bold hover:bg-[#bd4e0e] transition flex justify-center items-center gap-2">
+                    <Link 
+                      to={`/adopt/${pet.id}`} 
+                      className="w-full mt-6 bg-[#6F4E37] text-white py-3 rounded-xl font-bold hover:bg-[#bd4e0e] transition flex justify-center items-center gap-2"
+                    >
                       Adopt Me <PawPrint size={18} />
-                    </button>
+                    </Link>
                   </div>
                 </div>
               );

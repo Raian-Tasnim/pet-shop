@@ -1,6 +1,5 @@
 // src/Data/petsData.js
 
-// FIX: Use "../assets" instead of "./assets"
 import dog1 from '../assets/pets/dog1.jpg';
 import dog2 from '../assets/pets/dog2.jpg';
 import cat1 from '../assets/pets/cat1.jpg';
