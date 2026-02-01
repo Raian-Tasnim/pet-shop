@@ -6,7 +6,7 @@ export const Cart = ({ cartItems, removeFromCart, updateQuantity }) => {
   
   // Calculate Total Price
   const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const shipping = 120; // Fixed shipping cost in BDT
+  const shipping = 120; 
   const total = subtotal + shipping;
 
   return (
@@ -88,9 +88,12 @@ export const Cart = ({ cartItems, removeFromCart, updateQuantity }) => {
                   </div>
                 </div>
 
-                <button className="w-full bg-[#bd4e0e] text-white py-4 rounded-xl font-bold hover:bg-[#a0410b] transition shadow-lg flex items-center justify-center gap-2">
-                  Proceed to Checkout <ArrowRight size={20} />
-                </button>
+                    <Link 
+                      to="/checkout" 
+                      className="w-full bg-[#bd4e0e] text-white py-4 rounded-xl font-bold hover:bg-[#a0410b] transition shadow-lg flex items-center justify-center gap-2"
+                    >
+                      Proceed to Checkout <ArrowRight size={20} />
+                    </Link>
               </div>
             </div>
 

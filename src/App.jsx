@@ -12,16 +12,17 @@ import { Contact } from './Components/Contact';
 import { Favorites } from './Components/Favorites'; 
 import { PetDetails } from './Components/PetDetails';
 import { Cart } from './Components/Cart'; 
+import { Checkout } from './Components/Checkout'; 
 import ScrollToTop from './Components/ScrollToTop';
 import { Toast } from './Components/Toast'; 
 
 function App() {
   const [favorites, setFavorites] = useState([]);
   const [cartItems, setCartItems] = useState([]);
-
-  // UPDATED: Toast state now includes 'type'
+  
+  
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
-
+ 
   const toggleFavorite = (petId) => {
     if (favorites.includes(petId)) {
       setFavorites(favorites.filter(id => id !== petId));
@@ -30,22 +31,22 @@ function App() {
     }
   };
 
-  // --- UPDATED ADD TO CART LOGIC ---
+  // --- ADD TO CART LOGIC ---
   const addToCart = (product) => {
-    // 1. Check if item exists
+   
     const isAlreadyInCart = cartItems.some((item) => item.id === product.id);
 
     if (isAlreadyInCart) {
-      // 2. If yes, show "Info" toast and STOP
+     
       setToast({ 
         show: true, 
         message: `${product.name} is already in your cart!`,
-        type: 'info' // This triggers the blue info style
+        type: 'info' 
       });
-      return; // Do not add the item
+      return; 
     }
 
-    // 3. If no, add the item and show "Success" toast
+    
     setCartItems([...cartItems, { ...product, quantity: 1 }]);
     
     setToast({ 
@@ -67,6 +68,11 @@ function App() {
     );
   };
 
+  // Function to clear the cart 
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
   const closeToast = () => setToast({ ...toast, show: false });
 
   return (
@@ -76,7 +82,7 @@ function App() {
         
         <Header cartItems={cartItems} /> 
         
-        {/* Pass the 'type' to the Toast component */}
+        {/* Toast Notification */}
         <Toast 
           message={toast.message} 
           isVisible={toast.show} 
@@ -89,6 +95,7 @@ function App() {
           <Route path="/adopt" element={<Adopt favorites={favorites} toggleFavorite={toggleFavorite} />} />
           <Route path="/adopt/:id" element={<PetDetails />} />
           <Route path="/shop" element={<Shop addToCart={addToCart} />} />
+          
           <Route 
             path="/cart" 
             element={
@@ -99,6 +106,18 @@ function App() {
               />
             } 
           />
+
+          {/* Checkout Route with props */}
+          <Route 
+            path="/checkout" 
+            element={
+              <Checkout 
+                cartItems={cartItems} 
+                clearCart={clearCart} 
+              />
+            } 
+          />
+
           <Route path="/sell" element={<Sell />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/favorites" element={<Favorites favorites={favorites} toggleFavorite={toggleFavorite} />} />
