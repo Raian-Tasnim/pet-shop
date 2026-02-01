@@ -15,7 +15,8 @@ import { Cart } from './Components/Cart';
 import { Checkout } from './Components/Checkout'; 
 import ScrollToTop from './Components/ScrollToTop';
 import { Toast } from './Components/Toast'; 
-
+import { Privacy } from './Components/Privacy'; 
+import { Terms } from './Components/Terms';
 function App() {
   const [favorites, setFavorites] = useState([]);
   const [cartItems, setCartItems] = useState([]);
@@ -121,6 +122,8 @@ function App() {
           <Route path="/sell" element={<Sell />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/favorites" element={<Favorites favorites={favorites} toggleFavorite={toggleFavorite} />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
         </Routes>
 
         <Footer />

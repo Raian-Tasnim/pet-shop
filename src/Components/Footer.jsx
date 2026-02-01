@@ -100,8 +100,12 @@ export const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400 font-medium">
           <p>&copy; {new Date().getFullYear()} Happy Tales. Made with love for pets.</p>
           <div className="flex gap-6">
-            <span className="hover:text-[#F5F5DC] cursor-pointer transition">Privacy Policy</span>
-            <span className="hover:text-[#F5F5DC] cursor-pointer transition">Terms of Service</span>
+           <Link to="/privacy" className="hover:text-[#F5F5DC] cursor-pointer transition">
+              Privacy Policy
+            </Link>
+            <Link to="/terms" className="hover:text-[#F5F5DC] cursor-pointer transition">
+              Terms of Service
+            </Link>
           </div>
         </div>
         
