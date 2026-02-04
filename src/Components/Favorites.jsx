@@ -1,12 +1,27 @@
 import React from 'react';
 import { Heart, MapPin, PawPrint, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom'; // 1. Import Router hooks
 import { petsData } from '../Data/petsData';
+import { useAuth } from '../Context/AuthContext'; // 2. Import Auth
 
 export const Favorites = ({ favorites, toggleFavorite }) => {
+  const { user } = useAuth(); // 3. Get User state
+  const navigate = useNavigate();
+  const location = useLocation();
   
   // Filter the data to find only the pets whose ID is in the favorites array
   const favoritePets = petsData.filter(pet => favorites.includes(pet.id));
+
+  // 4. Secure Adopt Handler
+  const handleAdoptClick = (pet) => {
+    if (!user) {
+      // If not logged in, redirect to login page (and remember to come back here)
+      navigate('/login', { state: { from: location } });
+    } else {
+      // If logged in, show success message
+      alert(`Application started for ${pet.name}! Our team will contact you shortly.`);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-[#F5F5DC]">
@@ -48,7 +63,12 @@ export const Favorites = ({ favorites, toggleFavorite }) => {
                   <div className="flex items-center gap-2 mt-2 text-slate-400 text-sm">
                     <MapPin size={16} /> {pet.loc}
                   </div>
-                  <button className="w-full mt-6 bg-[#6F4E37] text-white py-3 rounded-xl font-bold hover:bg-[#bd4e0e] transition flex justify-center items-center gap-2">
+                  
+                  {/* 5. Updated Button with onClick Handler */}
+                  <button 
+                    onClick={() => handleAdoptClick(pet)}
+                    className="w-full mt-6 bg-[#6F4E37] text-white py-3 rounded-xl font-bold hover:bg-[#bd4e0e] transition flex justify-center items-center gap-2"
+                  >
                     Adopt Me <PawPrint size={18} />
                   </button>
                 </div>
