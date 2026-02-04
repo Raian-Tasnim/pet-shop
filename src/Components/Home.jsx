@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import homeImg from "../assets/pets/home-img.png"
+import SellItm from "../assets/products/crate.png"
 import { 
   ArrowRight, 
   Heart, 
@@ -57,7 +59,7 @@ export const Home = () => {
           <div className="flex-1 w-full max-w-md md:max-w-full relative">
             <div className="absolute inset-0 bg-[#6F4E37] rounded-full filter blur-3xl opacity-10 transform scale-90"></div>
             <img 
-              src="https://placehold.co/600x500/6F4E37/F5F5DC?text=Pet+Lifestyle" 
+              src={homeImg}
               alt="Happy Pets" 
               className="relative z-10 w-full h-auto object-cover rounded-3xl transform -rotate-2 hover:rotate-0 transition duration-500 shadow-xl border-4 border-white" 
             />
@@ -176,7 +178,7 @@ export const Home = () => {
                <div className="absolute inset-0 bg-[#6F4E37] rounded-[2.5rem] -rotate-3 opacity-10 scale-95 z-0"></div>
                <div className="relative z-10 bg-white p-2 rounded-[2.5rem] shadow-2xl transform transition hover:scale-[1.01] w-full">
                   <img 
-                    src="https://placehold.co/600x600/6F4E37/F5F5DC?text=Happy+Seller" 
+                    src={SellItm}
                     alt="Reselling is easy" 
                     className="rounded-4xl w-full h-auto object-cover"
                   />
