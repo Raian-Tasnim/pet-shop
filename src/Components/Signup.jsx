@@ -7,13 +7,23 @@ export const Signup = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    signup(name, email, password);
-    navigate('/');
+    setError('');
+    setLoading(true);
+    const result = await signup(name, email, password);
+    setLoading(false);
+    
+    if (result.success) {
+      navigate('/login', { state: { signupSuccess: true } });
+    } else {
+      setError(result.error || 'Signup failed');
+    }
   };
 
   return (
@@ -21,6 +31,8 @@ export const Signup = () => {
       <div className="bg-white p-10 rounded-3xl shadow-xl w-full max-w-md border border-slate-100">
         <h2 className="text-3xl font-bold text-[#6F4E37] mb-2 text-center">Create Account</h2>
         <p className="text-slate-400 text-center mb-8">Join the Happy Tales family</p>
+
+        {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-xl text-center text-sm">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -68,8 +80,8 @@ export const Signup = () => {
             </div>
           </div>
 
-          <button type="submit" className="w-full bg-[#bd4e0e] text-white py-4 rounded-xl font-bold hover:bg-[#a0410b] transition shadow-lg mt-4">
-            Create Account
+          <button type="submit" disabled={loading} className="w-full bg-[#bd4e0e] text-white py-4 rounded-xl font-bold hover:bg-[#a0410b] transition shadow-lg mt-4 disabled:opacity-50">
+            {loading ? 'Creating...' : 'Create Account'}
           </button>
         </form>
 

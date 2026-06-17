@@ -6,6 +6,8 @@ import { Lock, Mail } from 'lucide-react';
 export const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -13,17 +15,33 @@ export const Login = () => {
   // Redirect to the page they tried to visit, or home
   const from = location.state?.from?.pathname || '/';
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login(email, password);
-    navigate(from, { replace: true });
+    setError('');
+    setLoading(true);
+    const result = await login(email, password);
+    setLoading(false);
+    
+    if (result.success) {
+      navigate(from, { replace: true });
+    } else {
+      setError(result.error || 'Login failed');
+    }
   };
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-6">
       <div className="bg-white p-10 rounded-3xl shadow-xl w-full max-w-md border border-slate-100">
         <h2 className="text-3xl font-bold text-[#6F4E37] mb-2 text-center">Welcome Back</h2>
-        <p className="text-slate-400 text-center mb-8">Sign in to access your account</p>
+        <p className="text-slate-400 text-center mb-8">Log in to access your account</p>
+
+        {location.state?.signupSuccess && (
+          <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-xl text-center text-sm font-medium">
+            Account created successfully! Please log in to continue.
+          </div>
+        )}
+
+        {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-xl text-center text-sm">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -56,8 +74,8 @@ export const Login = () => {
             </div>
           </div>
 
-          <button type="submit" className="w-full bg-[#6F4E37] text-white py-4 rounded-xl font-bold hover:bg-[#5a3e2b] transition shadow-lg">
-            Sign In
+          <button type="submit" disabled={loading} className="w-full bg-[#6F4E37] text-white py-4 rounded-xl font-bold hover:bg-[#5a3e2b] transition shadow-lg disabled:opacity-50">
+            {loading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
 

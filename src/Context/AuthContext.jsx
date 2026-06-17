@@ -13,20 +13,30 @@ export const AuthProvider = ({ children }) => {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const login = (email, password) => {
-    // FIX: Check password to satisfy "unused variable" warning
-    if (!password) return false; 
+  const login = async (email, password) => {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      let data;
+      try {
+        const text = await response.text();
+        data = text ? JSON.parse(text) : {};
+      } catch (err) {
+        throw new Error(`Server error (${response.status}). Please make sure the backend server is running and you restarted the app.`);
+      }
 
-    // MOCK LOGIN logic
-    const dummyUser = { 
-      name: email.split('@')[0], 
-      email: email, 
-      token: '123456' 
-    };
-    
-    setUser(dummyUser);
-    localStorage.setItem('user', JSON.stringify(dummyUser));
-    return true;
+      if (!response.ok) throw new Error(data.message || 'Login failed');
+      
+      const loggedUser = { ...data.user, token: data.token };
+      setUser(loggedUser);
+      localStorage.setItem('user', JSON.stringify(loggedUser));
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
   };
 
   const logout = () => {
@@ -34,15 +44,27 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('user');
   };
 
-  const signup = (name, email, password) => {
-    // FIX: Check password here too
-    if (!password) return false;
+  const signup = async (name, email, password) => {
+    try {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+      let data;
+      try {
+        const text = await response.text();
+        data = text ? JSON.parse(text) : {};
+      } catch (err) {
+        throw new Error(`Server error (${response.status}). Please make sure the backend server is running and you restarted the app.`);
+      }
 
-    // MOCK SIGNUP logic
-    const dummyUser = { name, email, token: '123456' };
-    setUser(dummyUser);
-    localStorage.setItem('user', JSON.stringify(dummyUser));
-    return true;
+      if (!response.ok) throw new Error(data.message || 'Signup failed');
+
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
   };
 
   const value = {

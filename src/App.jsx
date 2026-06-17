@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// Context
-import { AuthProvider } from './Context/AuthContext';
+import { AuthProvider, useAuth } from './Context/AuthContext';
 
 // Components
 import { Header } from './Components/Header';
@@ -25,6 +24,80 @@ import { Toast } from './Components/Toast';
 import { Login } from './Components/Login';
 import { Signup } from './Components/Signup';
 import { ProtectedRoute } from './Components/ProtectedRoute';
+import { AdminRoute } from './Components/AdminRoute';
+import { AdminDashboard } from './Components/AdminDashboard';
+
+function AppContent({ favorites, toggleFavorite, cartItems, addToCart, removeFromCart, updateQuantity, clearCart, toast, closeToast }) {
+  return (
+    <Router>
+      <ScrollToTop />
+      <div className="flex flex-col min-h-screen relative">
+        
+        <Header cartItems={cartItems} clearCart={clearCart} />
+        
+        <Toast message={toast.message} isVisible={toast.show} type={toast.type} onClose={closeToast} />
+
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/adopt" element={<ProtectedRoute><Adopt favorites={favorites} toggleFavorite={toggleFavorite} /></ProtectedRoute>} />
+          <Route path="/adopt/:id" element={<ProtectedRoute><PetDetails /></ProtectedRoute>} />
+          <Route path="/shop" element={<ProtectedRoute><Shop addToCart={addToCart} /></ProtectedRoute>} />
+          
+          <Route 
+            path="/cart" 
+            element={
+              <ProtectedRoute>
+                <Cart 
+                  cartItems={cartItems} 
+                  removeFromCart={removeFromCart} 
+                  updateQuantity={updateQuantity} 
+                />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
+          <Route path="/privacy" element={<ProtectedRoute><Privacy /></ProtectedRoute>} />
+          <Route path="/terms" element={<ProtectedRoute><Terms /></ProtectedRoute>} />
+          <Route path="/favorites" element={<ProtectedRoute><Favorites favorites={favorites} toggleFavorite={toggleFavorite} /></ProtectedRoute>} />
+          
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+
+          <Route 
+            path="/checkout" 
+            element={
+              <ProtectedRoute>
+                <Checkout cartItems={cartItems} clearCart={clearCart} />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/sell" 
+            element={
+              <ProtectedRoute>
+                <Sell />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/admin" 
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            } 
+          />
+
+        </Routes>
+
+        <Footer />
+      </div>
+    </Router>
+  );
+}
 
 function App() {
   const [favorites, setFavorites] = useState([]);
@@ -65,66 +138,17 @@ function App() {
 
   return (
     <AuthProvider>
-      <Router>
-        <ScrollToTop />
-        <div className="flex flex-col min-h-screen relative">
-          
-          {/* 1. Pass clearCart to Header so we can wipe data on Logout */}
-          <Header cartItems={cartItems} clearCart={clearCart} /> 
-          
-          <Toast message={toast.message} isVisible={toast.show} type={toast.type} onClose={closeToast} />
-
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/adopt" element={<Adopt favorites={favorites} toggleFavorite={toggleFavorite} />} />
-            <Route path="/adopt/:id" element={<PetDetails />} />
-            <Route path="/shop" element={<Shop addToCart={addToCart} />} />
-            
-            {/* 2. PROTECT THE CART ROUTE */}
-            <Route 
-              path="/cart" 
-              element={
-                <ProtectedRoute>
-                  <Cart 
-                    cartItems={cartItems} 
-                    removeFromCart={removeFromCart} 
-                    updateQuantity={updateQuantity} 
-                  />
-                </ProtectedRoute>
-              } 
-            />
-
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/favorites" element={<Favorites favorites={favorites} toggleFavorite={toggleFavorite} />} />
-            
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-
-            <Route 
-              path="/checkout" 
-              element={
-                <ProtectedRoute>
-                  <Checkout cartItems={cartItems} clearCart={clearCart} />
-                </ProtectedRoute>
-              } 
-            />
-
-            <Route 
-              path="/sell" 
-              element={
-                <ProtectedRoute>
-                  <Sell />
-                </ProtectedRoute>
-              } 
-            />
-
-          </Routes>
-
-          <Footer />
-        </div>
-      </Router>
+      <AppContent 
+        favorites={favorites}
+        toggleFavorite={toggleFavorite}
+        cartItems={cartItems}
+        addToCart={addToCart}
+        removeFromCart={removeFromCart}
+        updateQuantity={updateQuantity}
+        clearCart={clearCart}
+        toast={toast}
+        closeToast={closeToast}
+      />
     </AuthProvider>
   );
 }

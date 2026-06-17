@@ -29,6 +29,9 @@ export const Header = ({ cartItems, clearCart }) => {
           <Link to="/adopt" className="text-slate-300 hover:text-[#F5F5DC] font-medium transition">Adopt</Link>
           <Link to="/shop" className="text-slate-300 hover:text-[#F5F5DC] font-medium transition">Shop</Link>
           <Link to="/sell" className="text-slate-300 hover:text-[#F5F5DC] font-medium transition">Sell Gear</Link>
+          {user?.role === 'admin' && (
+            <Link to="/admin" className="text-purple-300 hover:text-purple-100 font-bold transition">Admin</Link>
+          )}
         </nav>
 
         <div className="hidden md:flex items-center gap-6">
