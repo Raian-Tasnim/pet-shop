@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; 
 import logo from "../assets/logo.png";
-import { Heart, ShoppingCart, LogOut, User } from 'lucide-react'; 
+import { Heart, ShoppingCart, LogOut, User, Menu, X } from 'lucide-react'; 
 import { useAuth } from '../Context/AuthContext'; 
 
 // 1. Accept clearCart as a prop
 export const Header = ({ cartItems, clearCart }) => {
   const { user, logout } = useAuth(); 
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
     // 2. Clear the cart and log out
@@ -78,8 +79,72 @@ export const Header = ({ cartItems, clearCart }) => {
             )}
         </div>
 
-        <div className="md:hidden text-[#F5F5DC] text-2xl cursor-pointer">☰</div>
+        <button 
+          onClick={() => setIsMenuOpen(!isMenuOpen)} 
+          className="md:hidden text-[#F5F5DC] hover:text-white focus:outline-none"
+        >
+          {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
       </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-[#5c402d] border-t border-white/10 px-6 py-4 flex flex-col gap-4">
+          <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-slate-300 hover:text-[#F5F5DC] font-medium py-2">Home</Link>
+          <Link to="/adopt" onClick={() => setIsMenuOpen(false)} className="text-slate-300 hover:text-[#F5F5DC] font-medium py-2">Adopt</Link>
+          <Link to="/shop" onClick={() => setIsMenuOpen(false)} className="text-slate-300 hover:text-[#F5F5DC] font-medium py-2">Shop</Link>
+          <Link to="/sell" onClick={() => setIsMenuOpen(false)} className="text-slate-300 hover:text-[#F5F5DC] font-medium py-2">Sell Gear</Link>
+          {user?.role === 'admin' && (
+            <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="text-purple-300 hover:text-purple-100 font-bold py-2">Admin</Link>
+          )}
+          
+          <div className="flex items-center gap-6 pt-4 border-t border-white/10">
+            <Link to="/favorites" onClick={() => setIsMenuOpen(false)} className="text-[#F5F5DC] hover:text-white flex items-center gap-2">
+              <Heart size={20} /> Favorites
+            </Link>
+            <Link to="/cart" onClick={() => setIsMenuOpen(false)} className="text-[#F5F5DC] hover:text-white flex items-center gap-2 relative">
+              <ShoppingCart size={20} /> Cart
+              {cartItems.length > 0 && user && (
+                <span className="bg-[#bd4e0e] text-white text-[10px] font-bold px-2 py-0.5 rounded-full ml-1">
+                  {cartItems.length}
+                </span>
+              )}
+            </Link>
+          </div>
+
+          <div className="pt-2">
+            {user ? (
+              <div className="flex flex-col gap-3">
+                <span className="text-[#F5F5DC] text-sm font-bold flex items-center gap-2">
+                  <User size={18} /> {user.name}
+                </span>
+                <button 
+                  onClick={() => {
+                    handleLogout();
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full bg-[#bd4e0e] hover:bg-[#a0410b] py-3 rounded-lg text-sm text-white font-bold transition flex items-center justify-center gap-2"
+                >
+                  <LogOut size={16} /> Logout
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                <Link to="/login" onClick={() => setIsMenuOpen(false)} className="w-full text-center">
+                  <button className="w-full text-[#F5F5DC] hover:text-white font-bold text-sm py-2">
+                    Log In
+                  </button>
+                </Link>
+                <Link to="/signup" onClick={() => setIsMenuOpen(false)} className="w-full">
+                  <button className="w-full bg-[#F5F5DC] hover:bg-white py-3 rounded-lg text-sm text-[#6F4E37] font-bold transition">
+                    Sign Up
+                  </button>
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </header>
-  )
+  );
 }
