@@ -36,7 +36,11 @@ app.post('/api/auth/signup', async (req, res) => {
       [name, email, hashedPassword]
     );
 
-    const token = jwt.sign({ id: result.lastID, role: 'user' }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    const token = jwt.sign(
+      { id: result.lastID, role: 'user' }, 
+      process.env.JWT_SECRET || 'fallback_secret_for_demo', 
+      { expiresIn: '1d' }
+    );
     
     res.status(201).json({ 
       message: 'User created successfully', 
@@ -69,7 +73,11 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    const token = jwt.sign(
+      { id: user.id, role: user.role }, 
+      process.env.JWT_SECRET || 'fallback_secret_for_demo', 
+      { expiresIn: '1d' }
+    );
 
     res.json({
       message: 'Logged in successfully',
@@ -88,7 +96,7 @@ const verifyToken = (req, res, next) => {
   if (!token) return res.status(401).json({ message: 'Access denied' });
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_for_demo');
     req.user = decoded;
     next();
   } catch (err) {
